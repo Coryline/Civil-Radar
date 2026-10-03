@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from datetime import datetime
+
 from app.db import SessionLocal
 from app.models import Protest
 
@@ -30,14 +32,18 @@ def get_protest(protest_id: int, db: Session = Depends(get_db)):
 
 @router.post("/protests")
 def create_protest(payload: dict, db: Session = Depends(get_db)):
+    dedup_key = payload.get("dedup_key") or f"{payload.get('cause', 'manual')}-{payload.get('location_name', 'unknown')}"
+    start_time_raw = payload.get("start_time")
+    start_time = datetime.fromisoformat(start_time_raw) if isinstance(start_time_raw, str) else None
+
     protest = Protest(
-        dedup_key=payload.get("dedup_key", payload.get("cause", "manual") + "-manual"),
+        dedup_key=dedup_key,
         cause=payload.get("cause", "general_action"),
         location_name=payload.get("location_name", "Unknown location"),
         latitude=payload.get("latitude"),
         longitude=payload.get("longitude"),
         full_address=payload.get("full_address"),
-        start_time=payload.get("start_time"),
+        start_time=start_time,
         status="active",
         source_count=1,
         sources=[payload.get("source", {"source": "manual"})],
@@ -48,6 +54,29 @@ def create_protest(payload: dict, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(protest)
     return serialize_protest(protest)
+
+
+@router.get("/protests/geojson")
+def protests_geojson(db: Session = Depends(get_db)):
+    protests = db.query(Protest).filter(Protest.status == "active").all()
+    features = []
+    for protest in protests:
+        if protest.latitude is None or protest.longitude is None:
+            continue
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [float(protest.longitude), float(protest.latitude)],
+            },
+            "properties": {
+                "id": protest.id,
+                "title": protest.cause or "General action",
+                "address": protest.full_address or protest.location_name,
+                "status": protest.status,
+            },
+        })
+    return {"type": "FeatureCollection", "features": features}
 
 
 def serialize_protest(protest: Protest) -> dict:
