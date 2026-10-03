@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+
 from app.config import settings
 
 fallback_db_url = "sqlite:///./civil_radar.db"

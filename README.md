@@ -4,20 +4,20 @@ Civil Radar is a grassroots protest monitoring app built for public-source disco
 
 ## What it does
 
-- Aggregates public civic activity from public feeds
-- Detects likely protest activity from text signals
-- Normalizes location and time data
-- Deduplicates repeated reports
-- Tracks active / stale / dissolved status with TTL logic
-- Displays live protest markers on a map
-- Enables user-reported updates and event detail pages
+- aggregates public civic activity from public feeds
+- detects likely protest activity using simple NLP and keyword scoring
+- normalizes location and time clues
+- deduplicates repeated reports
+- tracks active / stale / dissolved status with TTL logic
+- exposes live protest markers on a map via REST and WebSocket
+- supports user-submitted reports when the app is running in a browser
 
 ## Local startup
 
 ```bash
 cp .env.example .env
-
-docker compose up --build
+python -m app.db_init
+uvicorn app.main:app --reload
 ```
 
 Then open the app:

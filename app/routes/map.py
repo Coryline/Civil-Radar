@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -27,14 +28,14 @@ def map_pins(db: Session = Depends(get_db)):
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [float(protest.longitude), float(protest.latitude)]
+                "coordinates": [float(protest.longitude), float(protest.latitude)],
             },
             "properties": {
                 "id": protest.id,
                 "title": protest.cause or "General action",
                 "address": protest.full_address or protest.location_name,
                 "status": protest.status,
-            }
+            },
         })
     return {"type": "FeatureCollection", "features": features}
 

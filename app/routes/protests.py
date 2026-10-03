@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 from app.db import SessionLocal
 from app.models import Protest

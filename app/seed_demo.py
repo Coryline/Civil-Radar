@@ -3,7 +3,6 @@ from datetime import datetime
 from app.db import SessionLocal
 from app.models import Protest
 
-
 DEMO_PROTESTS = [
     {
         "dedup_key": "demo-nyc-labor-2026-10-03",
