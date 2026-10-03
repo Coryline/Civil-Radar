@@ -1,18 +1,18 @@
 # Civil Radar
 
-Civil Radar is a real-time protest monitoring platform for grassroots civic action. It ingests public social and community sources, classifies likely protest activity, geocodes events, deduplicates repeated reports, tracks live TTL status, and exposes the data through a map-driven frontend.
+Civil Radar is a grassroots protest monitoring app built for public-source discovery and live map tracking.
 
-## Architecture
+## What it does
 
-- Public source harvesters: Mastodon, Reddit, Telegram
-- Event classification: NLP + rule-based filters
-- Geocoding: OpenStreetMap / Mapbox
-- Storage: PostgreSQL with PostGIS
-- Queue: Redis + Celery
-- Real-time updates: FastAPI WebSockets
-- Frontend: Mapbox GL JS / Leaflet-style UI
+- Aggregates public civic activity from public feeds
+- Detects likely protest activity from text signals
+- Normalizes location and time data
+- Deduplicates repeated reports
+- Tracks active / stale / dissolved status with TTL logic
+- Displays live protest markers on a map
+- Enables user-reported updates and event detail pages
 
-## Local development
+## Local startup
 
 ```bash
 cp .env.example .env
@@ -20,27 +20,12 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Then open:
-- API: http://localhost:8000/docs
-- Map frontend: http://localhost:8000/static/index.html
+Then open the app:
+- http://localhost:8000/static/index.html
+- http://localhost:8000/docs
 
 ## Notes
 
-- This project intentionally avoids private Instagram scraping.
-- It focuses on public, legal, community-driven signal sources.
-- The ingestion pipeline is designed for real-time grassroots discovery rather than luxury campaign-style event listings.
-
-## Commands
-
-```bash
-# Start the stack
-
-docker compose up
-
-# Run migrations / schema creation manually if needed
-python -m app.db_init
-```
-
-## License
-
-MIT
+- This app intentionally uses public, legal signal sources rather than private Instagram scraping.
+- Demo data is seeded automatically so the map works immediately without external API credentials.
+- You can later add real Mastodon, Reddit, or Telegram collectors by filling in credentials in `.env`.
