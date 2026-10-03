@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
@@ -8,5 +9,10 @@ router = APIRouter()
 def map_pins():
     return JSONResponse({
         "type": "FeatureCollection",
-        "features": [],
+        "features": []
     })
+
+
+@router.get("/map/health")
+def map_health():
+    return {"ok": True, "timestamp": datetime.utcnow().isoformat()}
